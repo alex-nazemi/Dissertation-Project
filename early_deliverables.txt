@@ -1,0 +1,50 @@
+Dissertation Early Deliverable:
+
+Problem Statement:
+
+People in the early stages of their lives with learning difficulties, particularly those on the autism spectrum, often struggle with recognising and understanding emotions in other people. This difficulty significantly impacts their ability to interact socially, communicate effectively, and undergo comprehensive developmental progress. It is crucial to address this challenge and provide targeted interventions to support their emotional and social growth. 
+
+The ultimate objective of this project is to develop a platform-independent application, accessible from the child's mobile device, that provides real-time support in recognising and understanding emotions. The application will leverage a machine learning model capable of reliably recognising emotions expressed through facial expressions captured by the device's camera. 
+
+The proposed multiplatform application will feature an engaging game specifically designed to assist children in learning to identify and label emotions accurately. It will simulate facial expressions to allow the child to interact with and emulate various emotions. The game will progressively present a series of facial expressions, requiring the child to correctly label the emotions. This gamified approach aims to make the learning experience enjoyable, interactive, and effective for children with learning difficulties. 
+
+By creating this application, we aim to provide specialists and caregivers with an additional tool to enhance the early-life development of children impacted by autism. The application's integration into existing therapeutic strategies will empower specialists to offer comprehensive support, focusing on improving social interactions, enhancing communication skills, and facilitating overall developmental progress. 
+
+The development of this emotion recognition application holds significant potential to foster improved emotional well-being, social competence, and developmental outcomes for children with learning difficulties, thereby making a positive impact on their lives.
+
+Literature Review:
+
+The premise that children on the autistic spectrum can benefit from early life intervention aiming to improve their emotion recognition resulting in better social interactions and communications in their later life is well supported in the latest research papers in the field.
+The research paper “Improving Emotion Recognition Abilities in Young People with Autism” by Uljarević et al. (2017) examines the effectiveness of an intervention program designed to enhance the emotional recognition skills in children with autism. The paper found that targeted training programs were successful in improving the autistic children’s abilities to correctly recognise emotions resulting in better social communication and interaction. Another research paper that also found that early intervention in a child with autisms development resulted in improvements in both their emotion recognition abilities and social skills, highlighting that the domains are interconnected, is "The Effects of Emotion Recognition Training on Social Skills among Individuals with Autism Spectrum Disorder" by Begeer et al. (2011). 
+
+Furthermore, the paper "Emotion Recognition Training in Autism Spectrum Disorder: A Systematic Review of Challenges Related to Generalizability" by Golan et al. (2015) explores the challenges related to the generalised approaches to improving the emotion recognition abilities of children on the autism spectrum. The study emphasises the importance of generalised approaches into training programs to best promote the transfer of learned skills to real-life social contexts.
+
+The research paper "Emotion Recognition and Social Skills in Children with and without Autism Spectrum Disorder" by Mazza et al. (2017) compares the emotion recognition abilities and social skills of children with and without autism spectrum disorder (ASD). The results of the paper highlight the stark difference in the ability of those children with and without ASD to recognise emotions, thus underscoring the importance of expanding the number of methods available for improving emotion recognition skills to facilitate better social interactions and communication in children with ASD.
+
+Methodology:
+
+Firstly, I will develop a machine learning model using the FER-2013 dataset, which consists of grayscale images representing a range of facial expressions depicting different emotions. This dataset will train the model to accurately recognise emotions from facial expressions captured through the camera input.
+
+Secondly, the trained model will be integrated into a React Native app. The advantage of choosing the React Native framework over the specific iOS and android app development languages (Swift and Java) is platform independence, allowing the app to run on both iOS and Android devices without the need to write more than one codebase. As well as seamless integration of platform-specific features, and consistent performance across devices. This ensures easy accessibility for children from their mobile devices no matter what type of OS they are running.
+
+The React Native app will provide an interactive game-like experience for the child, featuring a simulated face, interactive games, and real-time feedback on whether the child correctly labelled the emotion being emulated. The initial sequence of the game is that it begins with the robot emulating the emotion it is reading from the child’s face, with the child saying which emotion they were feeling, if the emotion of the child and the emotion being emulated by the robot match, the game proceeds to the next step as the emotion recognition is working. After this first trial, the robot continuously simulates different emotions, with the child having to label which emotion they believe the robot is emulating. The app will then provide instant feedback on the child’s performance, allowing for the child’s caregivers to get an accurate read of the child’s progress.
+
+By following this methodology, we aim to create an ML-based emotion recognition system using the FER-2013 dataset and integrate it into a user-friendly React Native app. This app will support children with learning difficulties in improving their emotion recognition skills, facilitating improved social interactions and emotional well-being as they develop through life.
+
+Current progress is the creation, training and testing of a model using the previously discussed dataset. The current accuracy of the model reported based on testing using the test dataset is 32%, this is far from satisfactory. Methods that will be utilised to improve the accuracy of the emotion recognition model are to expand the dataset, such as increasing the diversity and quantity of training samples, allowing the model to learn from a wider dataset as well as utilising pre-trained models such as VGGNet, modifying it for this specific use case.
+
+Risk assessment and mitigation:
+
+There are several risks associated with the project I am undertaking that must be mitigated for the core objectives to be achieved. 
+
+One such risk is that the model may become overfit to the training dataset resulting in it performing well on the training data but poorly on new, unseen data. Mitigation of this risk can be the implementation of dropout layers in the model architecture. This involves the random deactivation of a certain percentage of neurons during training, forcing the remaining neurons to learn robust and independent representations. This prevents the model from memorising the training dataset, thus improving its performance when presented with new data.
+
+Another risk to consider is user privacy and security. Mitigation of this risk involves the implementation of sufficient privacy measures to ensure the security and confidentiality of the user’s data. It’s key to follow best practices for data handling, storage, and encryption to mitigate risk to the user’s data being stored within the application. 
+
+The lack of availability for a physical robot that can simulate emotions posed a risk for the project as it prevented me from being able to have consistent access to the robot for testing the integration of my model with its emotion simulation. Mitigation of this risk was the switch to using a robotic face simulator instead, with the current choice being the Furhat robotic face.
+
+Gantt chart of dissertation project planned progress:
+ 
+
+
+
