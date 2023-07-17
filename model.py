@@ -1,192 +1,119 @@
-# # import os
-# # import numpy as np
-# # import cv2
-# # from sklearn.model_selection import train_test_split
-# # from keras.utils import to_categorical
-# # from keras.models import Sequential
-# # from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-
-# # # Define the path to the training folder
-# # train_folder = "/Users/alexnazemi/Desktop/Disseration Project/dataset/train"
-
-# # # Define the emotions and their corresponding labels
-# # emotions = {
-# #     "angry": 0,
-# #     "disgust": 1,
-# #     "fear": 2,
-# #     "happy": 3,
-# #     "sad": 4,
-# #     "surprise": 5,
-# #     "neutral": 6
-# # }
-
-# # # Initialize empty lists for storing images and labels
-# # images = []
-# # labels = []
-
-# # # Iterate over the images in the training folder
-# # for emotion_folder in os.listdir(train_folder):
-# #     emotion_label = emotions[emotion_folder]
-# #     emotion_path = os.path.join(train_folder, emotion_folder)
-    
-# #     for image_name in os.listdir(emotion_path):
-# #         image_path = os.path.join(emotion_path, image_name)
-        
-# #         # Read the image using OpenCV
-# #         image = cv2.imread(image_path)
-        
-# #         # Perform any necessary preprocessing on the image
-# #         # (e.g., resizing, normalization, etc.)
-        
-# #         # Append the preprocessed image and its label to the lists
-# #         images.append(image)
-# #         labels.append(emotion_label)
-
-# # # Convert the lists to numpy arrays
-# # images = np.array(images)
-# # labels = np.array(labels)
-
-# # # Split the dataset into training and validation sets
-# # X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=0.2, random_state=42)
-
-# # # Perform one-hot encoding on the labels
-# # y_train = to_categorical(y_train)
-# # y_val = to_categorical(y_val)
-
-# # # Define the architecture of the model
-# # model = Sequential()
-# # model.add(Conv2D(32, (3, 3), activation='relu', input_shape=X_train.shape[1:]))
-# # model.add(MaxPooling2D((2, 2)))
-# # model.add(Conv2D(64, (3, 3), activation='relu'))
-# # model.add(MaxPooling2D((2, 2)))
-# # model.add(Conv2D(128, (3, 3), activation='relu'))
-# # model.add(MaxPooling2D((2, 2)))
-# # model.add(Flatten())
-# # model.add(Dense(64, activation='relu'))
-# # model.add(Dense(len(emotions), activation='softmax'))
-
-# # # Compile the model
-# # model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-# # # Train the model
-# # model.fit(X_train, y_train, batch_size=32, epochs=10, validation_data=(X_val, y_val))
-
-# # # Save the trained model for future use
-# # model.save('my_model.keras')
-
-# import os
-# import numpy as np
-# import cv2
-# from sklearn.model_selection import train_test_split
-# from keras.utils import to_categorical
-# from keras.models import Sequential
-# from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-
-# # Define the path to the training folder
-# train_folder = "/Users/alexnazemi/Desktop/Disseration Project/dataset/train"
-
-# # Define the emotions and their corresponding labels
-# emotions = {
-#     "angry": 0,
-#     "disgust": 1,
-#     "fear": 2,
-#     "happy": 3,
-#     "sad": 4,
-#     "surprise": 5,
-#     "neutral": 6
-# }
-
-# # Initialize empty lists for storing images and labels
-# images = []
-# labels = []
-
-# # Iterate over the images in the training folder
-# for emotion_folder in os.listdir(train_folder):
-#     emotion_label = emotions[emotion_folder]
-#     emotion_path = os.path.join(train_folder, emotion_folder)
-    
-#     for image_name in os.listdir(emotion_path):
-#         image_path = os.path.join(emotion_path, image_name)
-        
-#         # Read the image using OpenCV
-#         image = cv2.imread(image_path)
-        
-#         # Perform any necessary preprocessing on the image
-#         # (e.g., resizing, normalization, etc.)
-        
-#         # Append the preprocessed image and its label to the lists
-#         images.append(image)
-#         labels.append(emotion_label)
-
-# # Convert the lists to numpy arrays
-# images = np.array(images)
-# labels = np.array(labels)
-
-# # Split the dataset into training and validation sets
-# X_train, X_val, y_train, y_val = train_test_split(images, labels, test_size=0.2, random_state=42)
-
-# # Perform one-hot encoding on the labels
-# y_train = to_categorical(y_train)
-# y_val = to_categorical(y_val)
-
-# # Define the architecture of the model
-# model = Sequential()
-# model.add(Conv2D(32, (3, 3), activation='relu', input_shape=X_train.shape[1:]))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Conv2D(64, (3, 3), activation='relu'))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Conv2D(128, (3, 3), activation='relu'))
-# model.add(MaxPooling2D((2, 2)))
-# model.add(Flatten())
-# model.add(Dense(64, activation='relu'))
-# model.add(Dense(len(emotions), activation='softmax'))
-
-# # Compile the model
-# model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-# # Train the model
-# model.fit(X_train, y_train, batch_size=32, epochs=11, validation_data=(X_val, y_val))
-
-# # Save the trained model for future use
-# model.save('my_model2.keras')
-
+import os
+import cv2
+import numpy as np
+from sklearn.model_selection import StratifiedKFold
+from keras.utils import to_categorical
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
+import tensorflow.keras as keras
 
-# Define the input shape
+# Define the path to the FER-2013 dataset directory
+data_path = "/Users/alexnazemi/Desktop/Disseration Project/dataset"
+
+# Define the list of emotions and their corresponding labels
+emotion_labels = {
+    'angry': 0,
+    'disgust': 1,
+    'fear': 2,
+    'happy': 3,
+    'neutral': 4,
+    'sad': 5,
+    'surprise': 6
+}
+
+# Load the images and labels from the train dataset
+train_images = []
+train_labels = []
+
+train_folder_path = os.path.join(data_path, "train")
+
+for emotion_folder in os.listdir(train_folder_path):
+    emotion = emotion_folder
+    emotion_folder_path = os.path.join(train_folder_path, emotion_folder)
+
+    # Skip non-directory files
+    if not os.path.isdir(emotion_folder_path):
+        continue
+
+    for image_filename in os.listdir(emotion_folder_path):
+        # Skip non-image files
+        if not image_filename.endswith(('.jpg', '.jpeg', '.png')):
+            continue
+
+        image_path = os.path.join(emotion_folder_path, image_filename)
+        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        image = cv2.resize(image, (48, 48))  # Resize images to the desired shape
+        train_images.append(image)
+        train_labels.append(emotion_labels[emotion])
+
+# Convert train images and labels to numpy arrays
+train_images = np.array(train_images)
+train_labels = np.array(train_labels)
+
+# Normalize pixel values to range between 0 and 1
+train_images = train_images / 255.0
+
+# Perform one-hot encoding on the train labels
+train_labels = to_categorical(train_labels)
+
+# Define the model
 input_shape = (48, 48, 1)  # Assuming input images are grayscale and have size 48x48
-
-# Create the model
 model = Sequential()
-
-# Add convolutional and pooling layers
-model.add(Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
-model.add(Conv2D(32, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-
-model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(Conv2D(64, (3, 3), activation='relu', input_shape=input_shape))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
 model.add(Dropout(0.25))
-
 model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
 model.add(Dropout(0.25))
-
-# Flatten the feature maps
+model.add(Conv2D(256, (3, 3), activation='relu'))
+model.add(Conv2D(256, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
+model.add(Dropout(0.25))
 model.add(Flatten())
-
-# Add fully connected layers
-model.add(Dense(256, activation='relu'))
+model.add(Dense(512, activation='relu'))
+model.add(BatchNormalization())
 model.add(Dropout(0.5))
-model.add(Dense(128, activation='relu'))
-model.add(Dense(7, activation='softmax'))  # Output layer with 7 emotion classes
+model.add(Dense(256, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dropout(0.5))
+model.add(Dense(7, activation='softmax'))
 
-# Compile the model
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+# Compile the model with a lower learning rate
+learning_rate = 0.001
+optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
+model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Print the model summary
-model.summary()
-model.save('my_model3.keras')
+# Perform cross-validation
+k_folds = 5
+skf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
+
+accuracies = []
+
+for fold, (train_index, val_index) in enumerate(skf.split(train_images, np.argmax(train_labels, axis=1))):
+    print(f"Training fold {fold + 1}/{k_folds}")
+
+    # Split the data into training and validation sets
+    X_train, X_val = train_images[train_index], train_images[val_index]
+    y_train, y_val = train_labels[train_index], train_labels[val_index]
+
+    # Train the model
+    epochs = 20
+    model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epochs, batch_size=32)
+
+    # Evaluate the model on the validation set
+    _, accuracy = model.evaluate(X_val, y_val)
+    accuracies.append(accuracy)
+
+# Calculate the mean and standard deviation of accuracies
+mean_accuracy = np.mean(accuracies)
+std_accuracy = np.std(accuracies)
+print(f"\nMean Accuracy: {mean_accuracy:.4f}")
+print(f"Standard Deviation: {std_accuracy:.4f}")
+
+# Save the model
+model.save('my_model5.keras')
