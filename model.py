@@ -116,4 +116,4 @@ print(f"\nMean Accuracy: {mean_accuracy:.4f}")
 print(f"Standard Deviation: {std_accuracy:.4f}")
 
 # Save the model
-model.save('my_model5.keras')
+model.save('my_model.keras')
