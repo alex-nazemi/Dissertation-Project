@@ -4,60 +4,59 @@ import numpy as np
 from keras.models import load_model
 from keras.utils import to_categorical
 
-# Load the trained model
-model = load_model("/Users/alexnazemi/Desktop/Disseration Project/my_model2.keras")
+# Define the path to the FER-2013 test dataset directory
+test_data_path = "/content/Dissertation-Project/dataset/test"
 
-# Define the emotions and their corresponding labels
-emotions = {
-    "angry": 0,
-    "disgust": 1,
-    "fear": 2,
-    "happy": 3,
-    "neutral": 4,
-    "sad": 5,
-    "surprise": 6
+# Define the list of emotions and their corresponding labels
+emotion_labels = {
+    'angry': 0,
+    'disgust': 1,
+    'fear': 2,
+    'happy': 3,
+    'neutral': 4,
+    'sad': 5,
+    'surprise': 6
 }
 
-# Define the path to the test folder
-test_folder = "/Users/alexnazemi/Desktop/Disseration Project/dataset/test"
-
-# Initialize empty lists for storing test images and labels
+# Load the test images and labels
 test_images = []
 test_labels = []
 
-# Iterate over the emotions and load the test images
-for emotion_folder in emotions:
-    emotion_label = emotions[emotion_folder]
-    emotion_path = os.path.join(test_folder, emotion_folder)
+for emotion_folder in os.listdir(test_data_path):
+    emotion = emotion_folder
+    emotion_folder_path = os.path.join(test_data_path, emotion_folder)
 
-    for image_name in os.listdir(emotion_path):
-        image_path = os.path.join(emotion_path, image_name)
+    # Skip non-directory files
+    if not os.path.isdir(emotion_folder_path):
+        continue
 
-        # Read the test image using OpenCV
-        image = cv2.imread(image_path)
+    for image_filename in os.listdir(emotion_folder_path):
+        # Skip non-image files
+        if not image_filename.endswith(('.jpg', '.jpeg', '.png')):
+            continue
 
-        # Perform any necessary preprocessing on the test image
-        # (e.g., resizing, normalization, etc.)
-
-        # Append the preprocessed test image and its label to the lists
+        image_path = os.path.join(emotion_folder_path, image_filename)
+        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        image = cv2.resize(image, (48, 48))  # Resize images to the desired shape
         test_images.append(image)
-        test_labels.append(emotion_label)
+        test_labels.append(emotion_labels[emotion])
 
-# Convert the test image and label lists to numpy arrays
+# Convert test images and labels to numpy arrays
 test_images = np.array(test_images)
 test_labels = np.array(test_labels)
 
-# Preprocess the test images
-# ... Code to preprocess the test images ...
+# Normalize pixel values to range between 0 and 1
+test_images = test_images / 255.0
 
-# Convert the ground truth labels to one-hot encoded vectors
-one_hot_labels = to_categorical(test_labels, num_classes=7)
+# Perform one-hot encoding on the test labels
+test_labels = to_categorical(test_labels)
 
-# Perform predictions on the preprocessed test images
-predictions = model.predict(test_images)
+# Load the trained model
+model_path = "/content/Dissertation-Project/my_model_with_early_stopping.keras"
+model = load_model(model_path)
 
-# Evaluate the model
-accuracy = model.evaluate(test_images, one_hot_labels)
+# Evaluate the model on the test set
+loss, accuracy = model.evaluate(test_images, test_labels)
 
-# Print the accuracy
-print("Test Accuracy:", accuracy)
+print(f"Test Loss: {loss:.4f}")
+print(f"Test Accuracy: {accuracy:.4f}")

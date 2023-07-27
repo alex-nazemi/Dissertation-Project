@@ -6,9 +6,10 @@ from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization
 import tensorflow.keras as keras
+from keras.callbacks import EarlyStopping
 
 # Define the path to the FER-2013 dataset directory
-data_path = "/Users/alexnazemi/Desktop/Disseration Project/dataset"
+data_path = "/content/Dissertation-Project/dataset"
 
 # Define the list of emotions and their corresponding labels
 emotion_labels = {
@@ -88,7 +89,7 @@ learning_rate = 0.001
 optimizer = keras.optimizers.Adam(learning_rate=learning_rate)
 model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
-# Perform cross-validation
+# Perform cross-validation with early stopping
 k_folds = 5
 skf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
 
@@ -101,9 +102,12 @@ for fold, (train_index, val_index) in enumerate(skf.split(train_images, np.argma
     X_train, X_val = train_images[train_index], train_images[val_index]
     y_train, y_val = train_labels[train_index], train_labels[val_index]
 
-    # Train the model
-    epochs = 20
-    model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epochs, batch_size=32)
+    # Define early stopping callback
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+
+    # Train the model with early stopping
+    epochs = 100  # You can set a larger number and early stopping will stop when the validation loss doesn't improve for 5 epochs
+    model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epochs, batch_size=32, callbacks=[early_stopping])
 
     # Evaluate the model on the validation set
     _, accuracy = model.evaluate(X_val, y_val)
@@ -116,4 +120,4 @@ print(f"\nMean Accuracy: {mean_accuracy:.4f}")
 print(f"Standard Deviation: {std_accuracy:.4f}")
 
 # Save the model
-model.save('my_model.keras')
+model.save('my_model_with_early_stopping.keras')
