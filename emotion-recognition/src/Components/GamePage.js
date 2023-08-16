@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const GameContainer = styled.div`
   text-align: center;
@@ -43,20 +44,28 @@ const GamePage = () => {
     "sad",
     "surprise",
   ];
+
+  const emotionsRef = useRef(emotions);
   const [score, setScore] = useState(0);
   const [stage, setStage] = useState(0);
   const [image, setImage] = useState("");
   const [options, setOptions] = useState([]);
   const [correctAnswer, setCorrectAnswer] = useState("");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (stage < 10) {
       const randomEmotion =
-        emotions[Math.floor(Math.random() * emotions.length)];
+        emotionsRef.current[
+          Math.floor(Math.random() * emotionsRef.current.length)
+        ];
       const randomImageNumber = Math.floor(Math.random() * 6) + 1;
       const imagePath = `Images/${randomEmotion}/${randomImageNumber}.jpg`;
 
-      const wrongOptions = emotions.filter((e) => e !== randomEmotion);
+      const wrongOptions = emotionsRef.current.filter(
+        (e) => e !== randomEmotion
+      );
       const shuffledOptions = wrongOptions.sort(() => Math.random() - 0.5);
       const finalOptions = [randomEmotion, ...shuffledOptions.slice(0, 3)].sort(
         () => Math.random() - 0.5
@@ -65,8 +74,12 @@ const GamePage = () => {
       setImage(imagePath);
       setOptions(finalOptions);
       setCorrectAnswer(randomEmotion);
+    } else if (stage === 10) {
+      setTimeout(() => {
+        navigate("/training");
+      }, 2000);
     }
-  }, [stage]);
+  }, [stage, navigate]);
 
   const handleAnswer = (option) => {
     if (option === correctAnswer) {
