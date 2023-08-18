@@ -61,6 +61,16 @@ const PromptText = styled.p`
   margin-bottom: 20px;
 `;
 
+const emotionLabels = [
+  "anger",
+  "disgust",
+  "fear",
+  "happy",
+  "neutral",
+  "sad",
+  "surprise",
+];
+
 const TrainingPage = () => {
   const videoRef = useRef(null);
   const [model, setModel] = useState(null);
@@ -74,15 +84,6 @@ const TrainingPage = () => {
 
   const navigate = useNavigate();
 
-  const emotionLabels = [
-    "anger",
-    "disgust",
-    "fear",
-    "happy",
-    "neutral",
-    "sad",
-    "surprise",
-  ];
   const stimuliPaths = "EmotionalStimuli";
 
   useEffect(() => {
@@ -109,6 +110,10 @@ const TrainingPage = () => {
 
   useEffect(() => {
     setPromptText("What does this image make you feel?");
+
+    const initialEmotion =
+      emotionLabels[Math.floor(Math.random() * emotionLabels.length)];
+    setStimulusImage(getRandomImagePath(initialEmotion));
   }, []);
 
   function getRandomImagePath(emotion) {
@@ -168,7 +173,7 @@ const TrainingPage = () => {
         setStimulusImage("");
         setTimeout(() => {
           navigate("/post-classification");
-        }, 2000);  
+        }, 2000); // navigate after a delay of 2 seconds
       }
 
       setIsComparing(false);
