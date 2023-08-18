@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const TrainingContainer = styled.div`
   text-align: center;
@@ -70,6 +71,8 @@ const TrainingPage = () => {
   const [isComparing, setIsComparing] = useState(false);
   const [promptText, setPromptText] = useState("");
   const MAX_ROUNDS = 15;
+
+  const navigate = useNavigate();
 
   const emotionLabels = [
     "anger",
@@ -163,6 +166,9 @@ const TrainingPage = () => {
       } else {
         setFeedback("Thank you for participating!");
         setStimulusImage("");
+        setTimeout(() => {
+          navigate("/post-classification");
+        }, 2000);  
       }
 
       setIsComparing(false);

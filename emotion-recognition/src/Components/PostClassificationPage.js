@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { useScores } from "./ScoreContext";  
+import { useScores } from "./ScoreContext";
 
 const GameContainer = styled.div`
   text-align: center;
@@ -35,7 +35,7 @@ const Score = styled.p`
   font-weight: bold;
 `;
 
-const GamePage = () => {
+const PostClassificationPage = () => {
   const emotions = [
     "angry",
     "disgust",
@@ -54,7 +54,7 @@ const GamePage = () => {
   const [correctAnswer, setCorrectAnswer] = useState("");
 
   const navigate = useNavigate();
-  const { setPreScore } = useScores();  // Destructure the setPreScore function from context
+  const { setPostScore } = useScores();
 
   useEffect(() => {
     if (stage < 10) {
@@ -77,13 +77,13 @@ const GamePage = () => {
       setOptions(finalOptions);
       setCorrectAnswer(randomEmotion);
     } else if (stage === 10) {
-      setPreScore(score);  // Save the score to central state before navigating
+      setPostScore(score); // Save the score to central state before navigating
 
       setTimeout(() => {
-        navigate("/training");
+        navigate("/results");
       }, 2000);
     }
-  }, [stage, navigate, setPreScore, score]);
+  }, [stage, navigate, setPostScore, score]);
 
   const handleAnswer = (option) => {
     if (option === correctAnswer) {
@@ -112,4 +112,4 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+export default PostClassificationPage;
