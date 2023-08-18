@@ -54,7 +54,7 @@ const GamePage = () => {
   const [correctAnswer, setCorrectAnswer] = useState("");
 
   const navigate = useNavigate();
-  const { setPreScore } = useScores();  // Destructure the setPreScore function from context
+  const { setPreScore } = useScores(); 
 
   useEffect(() => {
     if (stage < 10) {
@@ -77,7 +77,7 @@ const GamePage = () => {
       setOptions(finalOptions);
       setCorrectAnswer(randomEmotion);
     } else if (stage === 10) {
-      setPreScore(score);  // Save the score to central state before navigating
+      setPreScore(score); 
 
       setTimeout(() => {
         navigate("/training");

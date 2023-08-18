@@ -80,7 +80,7 @@ const TrainingPage = () => {
   const [round, setRound] = useState(0);
   const [isComparing, setIsComparing] = useState(false);
   const [promptText, setPromptText] = useState("");
-  const MAX_ROUNDS = 15;
+  const MAX_ROUNDS = 10;
 
   const navigate = useNavigate();
 
@@ -173,7 +173,7 @@ const TrainingPage = () => {
         setStimulusImage("");
         setTimeout(() => {
           navigate("/post-classification");
-        }, 2000); // navigate after a delay of 2 seconds
+        }, 2000);
       }
 
       setIsComparing(false);
@@ -192,7 +192,11 @@ const TrainingPage = () => {
       ></video>
       {promptText && <PromptText>{promptText}</PromptText>}
       {stimulusImage && !comparisonImage && (
-        <StimulusImage src={stimulusImage} alt="Stimulus" />
+        <StimulusImage
+          src={stimulusImage}
+          alt="Stimulus"
+          onError={(e) => console.error("StimulusImage Error:", e)}
+        />
       )}
       {comparisonImage && (
         <StimulusImage src={comparisonImage} alt="Comparison Emotion" />

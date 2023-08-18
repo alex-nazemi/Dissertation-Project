@@ -77,7 +77,7 @@ const PostClassificationPage = () => {
       setOptions(finalOptions);
       setCorrectAnswer(randomEmotion);
     } else if (stage === 10) {
-      setPostScore(score); // Save the score to central state before navigating
+      setPostScore(score); 
 
       setTimeout(() => {
         navigate("/results");

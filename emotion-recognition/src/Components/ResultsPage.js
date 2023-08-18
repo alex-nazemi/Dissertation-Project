@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useScores } from "./ScoreContext";
+import { getAuth } from "firebase/auth";
+import { fetchUserScores } from "./firebaseUtilities";
 
 const ResultsContainer = styled.div`
   text-align: center;
@@ -20,31 +22,62 @@ const ResultsHeading = styled.h2`
   color: #444;
 `;
 
-const Score = styled.p`
-  font-size: 20px;
-  margin: 10px 0;
-  color: #555;
-`;
-
 const FeedbackMessage = styled.p`
   font-size: 22px;
-  color: ${props => (props.positive ? "#007bff" : "#d9534f")};
+  color: ${(props) => (props.$positive ? "#007bff" : "#d9534f")};
   margin-top: 20px;
+`;
+
+const HistoricalScores = styled.div`
+  margin-top: 30px;
+  text-align: left;
+  width: 80%;
+`;
+
+const HistoricalScoreItem = styled.div`
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 `;
 
 const ResultsPage = () => {
   const { preScore, postScore } = useScores();
+  const [historicalScores, setHistoricalScores] = useState([]);
+
+  useEffect(() => {
+    const fetchScores = async () => {
+      const auth = getAuth();
+      if (auth.currentUser) {
+        const scores = await fetchUserScores(auth.currentUser.uid);
+        setHistoricalScores(scores);
+      }
+    };
+
+    fetchScores();
+  }, []);
 
   return (
     <ResultsContainer>
       <ResultsHeading>Results</ResultsHeading>
-      <Score>Pre-Classification Score: {preScore}</Score>
-      <Score>Post-Classification Score: {postScore}</Score>
-      <FeedbackMessage positive={postScore > preScore}>
+      <p>Pre-Classification Score: {preScore}</p>
+      <p>Post-Classification Score: {postScore}</p>
+      <FeedbackMessage $positive={postScore > preScore}>
         {postScore > preScore
           ? "Congratulations! You've improved."
           : "Keep practicing to improve!"}
       </FeedbackMessage>
+      <HistoricalScores>
+        <h3>Previous Scores:</h3>
+        {Array.isArray(historicalScores) && historicalScores.map((scoreData, index) => (
+          <HistoricalScoreItem key={index}>
+            <p>
+              Date:{" "}
+              {new Date(scoreData.timestamp?.seconds * 1000).toLocaleString()}
+            </p>
+            <p>Pre-Classification Score: {scoreData.preTrainingScore}</p>
+            <p>Post-Classification Score: {scoreData.postTrainingScore}</p>
+          </HistoricalScoreItem>
+        ))}
+      </HistoricalScores>
     </ResultsContainer>
   );
 };
