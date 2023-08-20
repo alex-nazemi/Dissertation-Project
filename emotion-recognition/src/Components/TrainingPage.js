@@ -80,7 +80,7 @@ const TrainingPage = () => {
   const [round, setRound] = useState(0);
   const [isComparing, setIsComparing] = useState(false);
   const [promptText, setPromptText] = useState("");
-  const MAX_ROUNDS = 1;
+  const MAX_ROUNDS = 15;
 
   const navigate = useNavigate();
 
