@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useScores } from "./ScoreContext";
 import { getAuth } from "firebase/auth";
-import { fetchUserScores } from "./firebaseUtilities";
+import { fetchUserScores, storeUserScore } from "./firebaseUtilities";
+
 
 const ResultsContainer = styled.div`
   text-align: center;
@@ -42,6 +43,16 @@ const HistoricalScoreItem = styled.div`
 const ResultsPage = () => {
   const { preScore, postScore } = useScores();
   const [historicalScores, setHistoricalScores] = useState([]);
+
+  useEffect(() => {
+    const auth = getAuth();
+    if (auth.currentUser) {
+        const userId = auth.currentUser.uid;
+        if (preScore && postScore) {
+          storeUserScore(userId, preScore, postScore);
+        }
+    }
+  }, [preScore, postScore]);
 
   useEffect(() => {
     const fetchScores = async () => {

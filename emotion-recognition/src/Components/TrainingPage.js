@@ -80,7 +80,7 @@ const TrainingPage = () => {
   const [round, setRound] = useState(0);
   const [isComparing, setIsComparing] = useState(false);
   const [promptText, setPromptText] = useState("");
-  const MAX_ROUNDS = 10;
+  const MAX_ROUNDS = 1;
 
   const navigate = useNavigate();
 
@@ -95,9 +95,9 @@ const TrainingPage = () => {
         videoRef.current.srcObject = stream;
       }
     }
-
     setupWebcam();
   }, []);
+  
 
   useEffect(() => {
     async function loadModel() {
@@ -110,11 +110,23 @@ const TrainingPage = () => {
 
   useEffect(() => {
     setPromptText("What does this image make you feel?");
-
-    const initialEmotion =
-      emotionLabels[Math.floor(Math.random() * emotionLabels.length)];
+    const initialEmotion = emotionLabels[Math.floor(Math.random() * emotionLabels.length)];
     setStimulusImage(getRandomImagePath(initialEmotion));
   }, []);
+
+  useEffect(() => {
+    if (round === MAX_ROUNDS) {
+      setFeedback("Thank you for participating!");
+      setStimulusImage("");
+      setTimeout(() => {
+          navigate("/post-classification");
+      }, 2000);
+    } else {
+      const randomEmotion = emotionLabels[Math.floor(Math.random() * emotionLabels.length)];
+      setStimulusImage(getRandomImagePath(randomEmotion));
+      setPromptText("What does this image make you feel?");
+    }
+  }, [round, navigate]);
 
   function getRandomImagePath(emotion) {
     const randomIndex = Math.floor(Math.random() * 10) + 1;
@@ -125,6 +137,7 @@ const TrainingPage = () => {
     const randomImageIndex = Math.floor(Math.random() * 6) + 1;
     return `/Images/${emotion}/${randomImageIndex}.jpg`;
   }
+
 
   const detectEmotion = (video) => {
     if (!model) return null;
@@ -143,13 +156,19 @@ const TrainingPage = () => {
     return detectedEmotion;
   };
 
+  const isVideoPlaying = video => {
+    return video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2;
+  }
+
   const handleUserChoice = async (chosenEmotion) => {
     if (!isComparing) {
-      const detectedEmotion = await detectEmotion(videoRef.current);
-      if (chosenEmotion === detectedEmotion) {
-        setFeedback("Your feelings match the model's prediction.");
-      } else {
-        setFeedback(`Model detected: ${detectedEmotion}.`);
+      if (isVideoPlaying(videoRef.current)) {
+        const detectedEmotion = await detectEmotion(videoRef.current);
+        if (chosenEmotion === detectedEmotion) {
+          setFeedback("Your feelings match the model's prediction.");
+        } else {
+          setFeedback(`Model detected: ${detectedEmotion}.`);
+        }
       }
 
       setComparisonImage(getComparisonImagePath(chosenEmotion));
@@ -162,22 +181,9 @@ const TrainingPage = () => {
         setFeedback("Try again.");
       }
 
-      if (round < MAX_ROUNDS) {
-        const randomEmotion =
-          emotionLabels[Math.floor(Math.random() * emotionLabels.length)];
-        setStimulusImage(getRandomImagePath(randomEmotion));
-        setRound(round + 1);
-        setPromptText("What does this image make you feel?");
-      } else {
-        setFeedback("Thank you for participating!");
-        setStimulusImage("");
-        setTimeout(() => {
-          navigate("/post-classification");
-        }, 2000);
-      }
-
       setIsComparing(false);
       setComparisonImage("");
+      setRound(round + 1);
     }
   };
 
@@ -188,9 +194,10 @@ const TrainingPage = () => {
         width="640"
         height="480"
         autoPlay
+        playsInline
         style={{ display: "none" }}
       ></video>
-      {promptText && <PromptText>{promptText}</PromptText>}
+      {promptText && round < MAX_ROUNDS && <PromptText>{promptText}</PromptText>}
       {stimulusImage && !comparisonImage && (
         <StimulusImage
           src={stimulusImage}
@@ -202,12 +209,13 @@ const TrainingPage = () => {
         <StimulusImage src={comparisonImage} alt="Comparison Emotion" />
       )}
       <ButtonContainer>
-        {emotionLabels.map((choice) => (
+        {round < MAX_ROUNDS && emotionLabels.map((choice) => (
           <ChoiceButton key={choice} onClick={() => handleUserChoice(choice)}>
             {choice}
           </ChoiceButton>
         ))}
       </ButtonContainer>
+
 
       {feedback && <FeedbackText>{feedback}</FeedbackText>}
     </TrainingContainer>
