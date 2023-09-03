@@ -58,7 +58,7 @@ train_images = train_images / 255.0
 train_labels = to_categorical(train_labels)
 
 # Define the model
-input_shape = (48, 48, 1)  # Assuming input images are grayscale and have size 48x48
+input_shape = (48, 48, 1)  
 model = Sequential()
 model.add(Conv2D(64, (3, 3), activation='relu', input_shape=input_shape))
 model.add(Conv2D(64, (3, 3), activation='relu'))
@@ -106,7 +106,7 @@ for fold, (train_index, val_index) in enumerate(skf.split(train_images, np.argma
     early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
     # Train the model with early stopping
-    epochs = 100  # You can set a larger number and early stopping will stop when the validation loss doesn't improve for 5 epochs
+    epochs = 100  
     model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=epochs, batch_size=32, callbacks=[early_stopping])
 
     # Evaluate the model on the validation set
